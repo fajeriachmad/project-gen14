@@ -18,6 +18,7 @@ public class Nomor6 {
     public static void main(String[] args) {
         List<Integer> totalPerVocal = Arrays.asList(0, 0, 0, 0, 0);
 
+        System.out.print("Input sentence : ");
         Scanner input = new Scanner(System.in);
         String s = input.nextLine().toLowerCase();
         
