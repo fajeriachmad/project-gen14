@@ -15,7 +15,7 @@ public class DaftarBarang {
     @Override
     public String toString() {
         // TODO Auto-generated method stub
-        String result = "Nama : " + this.nama + " harga : " + this.harga; 
+        String result = "Produk : " + this.nama + " dengan harga : " + this.harga; 
         return result;
     }
 }

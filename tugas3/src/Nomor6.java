@@ -17,6 +17,8 @@ public class Nomor6 {
 
     public static void main(String[] args) {
         List<Integer> totalPerVocal = Arrays.asList(0, 0, 0, 0, 0);
+        // index List totalPerVocal menyesuaikan index List vocals
+        // sehingga totalPerVocal[0] = vocals[0]
 
         System.out.print("Input sentence : ");
         Scanner input = new Scanner(System.in);
@@ -24,13 +26,17 @@ public class Nomor6 {
         
         for (int i = 0; i < s.length(); i++) {
             if (isVocal(s.charAt(i))) {
+                // mendapatkan index dari huruf vokal
                 int pos = vocals.indexOf(s.charAt(i));
                 int value = totalPerVocal.get(pos);
+                // increment jumlah karakter berdasarkan index pos
                 value++;
+                // update nilai hasil increment ke totalPerVocal berdasarkan index pos
                 totalPerVocal.set(pos, value);
             }
         }
 
+        // output
         for (int i = 0; i < vocals.size(); i++) {
             System.out.println(vocals.get(i) + " = " + totalPerVocal.get(i));
         }
