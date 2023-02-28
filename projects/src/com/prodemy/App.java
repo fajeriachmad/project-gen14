@@ -1,18 +1,21 @@
 package com.prodemy;
 
-import java.util.Iterator;
+// import java.util.Iterator;
 import java.util.Scanner;
 
 public class App {
 
 	public static void main(String[] args) {
-		// inisiasi array untuk menyimpan luas
-		double[] barangs = new double[10];
+		// inisiasi object bangun datar untuk menyimpan nilai luas
 		
-		Scanner input = new Scanner(System.in);
+		// double[] myLuasArray = new double[10];
+		BangunDatar[] bangunDatar = new BangunDatar[10];
+		// deklarasi variable bantuan
         String action1, action2;
         double temp1, temp2, temp3;
 
+		
+		// interface untuk menampilkan opsi
         int i = 0;
         while (true) {
             System.out.println("=== APLIKASI INTERFACE MENCARI LUAS DAN KELILING ===");
@@ -24,6 +27,7 @@ public class App {
             System.out.println("[0] Keluar");
             System.out.println("====================================================");
             System.out.print("Pilih > ");
+            Scanner input = new Scanner(System.in);
             action1 = input.nextLine();
             
             // opsi segitiga
@@ -46,20 +50,24 @@ public class App {
                 	
                 	// validasi jika input bernilai negatif maka kembali ke looping
                 	try {
-                		validation(temp1);
-                    	validation(temp2);
+                		validation(temp1, temp2);
                 	}
                 	catch (Exception e){
                 		e.printStackTrace();
                 		continue;
                 	}
                 	
-                	// memanggil class segitiga sama kaki
-                	SegitigaSamaKaki s = new SegitigaSamaKaki();
-                	s.setAlasTinggi(temp1, temp2);
-                	System.out.println("Luas = " + s.getLuas());
-                	System.out.println("Keliling = " + s.getKeliling());
-                	barangs[i] = s.getLuas();
+                	// instansiasi object segitiga sama kaki
+                	SegitigaSamaKaki bangun = new SegitigaSamaKaki(temp1, temp2);
+                	System.out.println("Luas = " + bangun.getLuas());
+                	System.out.println("Keliling = " + bangun.getKeliling());
+					bangunDatar[i] = bangun;
+					// bangun.setLuas(bangun.getLuas());
+					// myLuasArray[i] = bangun.luas;
+                	// bangunDatar[i] = new BangunDatar(bangun.namaBangunDatar, bangun.getLuas(), bangun.getKeterangan());
+					// bangunDatar[i].setNama(s.namaBangunDatar);
+					// bangunDatar[i].setLuas(s.getLuas());
+					// bangunDatar[i].setKeterangan(s.getKeterangan());
                 	i++;
                 } 
                 // segitiga sembarang / sama sisi
@@ -74,21 +82,31 @@ public class App {
                 	
                 	// validasi jika input bernilai negatif maka kembali ke looping
                 	try {
-                		validation(temp1);
-                    	validation(temp2);
-                    	validation(temp3);
+						validation(temp1, temp2, temp3);
                 	}
                 	catch (Exception e){
                 		e.printStackTrace();
                 		continue;
                 	}
                 	
+					
                 	// memanggil class segitiga sembarang
-                	SegitigaSembarang s = new SegitigaSembarang();
-                	s.setABC(temp1, temp2, temp3);
-                	System.out.println("Luas = " + s.getLuas());
-                	System.out.println("Keliling = " + s.getKeliling());
-                	barangs[i] = s.getLuas();
+                	SegitigaSembarang bangun = new SegitigaSembarang(temp1, temp2, temp3);
+					System.out.println("Luas = " + bangun.getLuas());
+                	System.out.println("Keliling = " + bangun.getKeliling());
+                	// bangunDatar[i] = new BangunDatar(bangun.namaBangunDatar, bangun.getLuas(), bangun.getKeterangan());
+                	bangunDatar[i] = bangun;
+					// System.out.println("Luas = " + segitiga.getLuas());
+                	// System.out.println("Keliling = " + segitiga.getKeliling());
+					// bangunDatar[i] = new BangunDatar(segitiga.namaBangunDatar, segitiga.getLuas(), segitiga.getKeterangan());
+					// constructor tanpa parameter
+                	// bangunDatar[i] = new BangunDatar();
+					// bangunDatar[i].setNama(s.namaBangunDatar);
+					// bangunDatar[i].setLuas(s.getLuas());
+					// bangunDatar[i].setKeterangan(s.getKeterangan());
+					
+					// constructor dengan parameter
+
                 	i++;
                 } 
                 
@@ -102,20 +120,33 @@ public class App {
                 	
                 	// validasi jika input bernilai negatif maka kembali ke looping
                 	try {
-                		validation(temp1);
-                    	validation(temp2);
+						validation(temp1, temp2);
                 	}
                 	catch (Exception e){
-                		e.printStackTrace();
+						e.printStackTrace();
                 		continue;
                 	}
                 	
-                	// memanggil class segitiga siku
-                	SegitigaSiku s = new SegitigaSiku();
-                	s.setAlasTinggi(temp1, temp2);
-                	System.out.println("Luas = " + s.getLuas());
-                	System.out.println("Keliling = " + s.getKeliling());
-                	barangs[i] = s.getLuas();
+                	// instansiasi object segitiga siku pada constructor TANPA parameter
+					// instansiasi menggunakan setter
+                	// SegitigaSiku s = new SegitigaSiku();
+                	// s.setAlasTinggi(temp1, temp2);
+                	// System.out.println("Luas = " + s.getLuas());
+                	// System.out.println("Keliling = " + s.getKeliling());
+
+					// instansiasi object segitiga siku pada constructor DENGAN parameter
+					SegitigaSiku bangun = new SegitigaSiku(temp1, temp2);
+					System.out.println("Luas = " + bangun.getLuas());
+                	System.out.println("Keliling = " + bangun.getKeliling());
+                	// bangunDatar[i] = new BangunDatar(bangun.namaBangunDatar, bangun.getLuas(), bangun.getKeterangan());
+					bangunDatar[i] = bangun;
+					// System.out.println("Luas = " + segitiga.getLuas());
+					// System.out.println("Keliling = " + segitiga.getKeliling());
+					// bangunDatar[i] = new BangunDatar(segitiga.namaBangunDatar, segitiga.getLuas(), segitiga.getKeterangan());
+                	// bangunDatar[i] = new BangunDatar();
+					// bangunDatar[i].setNama(s.namaBangunDatar);
+					// bangunDatar[i].setLuas(s.getLuas());
+					// bangunDatar[i].setKeterangan(s.getKeterangan());
                 	i++;
                 }
                 
@@ -126,7 +157,7 @@ public class App {
                 else {
                     System.out.println("Undefined command ||Segitiga||");
                 }
-//                continue;
+                // input.reset();
             } 
             
             // opsi persegi
@@ -145,12 +176,18 @@ public class App {
             	}
             	
             	// inisiasi class persegi
-            	Persegi s = new Persegi();
-            	s.setSisi(temp1);
-            	System.out.println("Luas = " + s.getLuas());
-            	System.out.println("Keliling = " + s.getKeliling());
-            	barangs[i] = s.getLuas();
+            	Persegi bangun = new Persegi(temp1);
+				System.out.println("Luas = " + bangun.getLuas());
+				System.out.println("Keliling = " + bangun.getKeliling());
+				bangunDatar[i] = new BangunDatar(bangun.namaBangunDatar, bangun.getLuas(), bangun.getKeterangan());
+            	// System.out.println("Luas = " + s.getLuas());
+            	// System.out.println("Keliling = " + s.getKeliling());
+            	// bangunDatar[i] = new BangunDatar();
+				// bangunDatar[i].setNama(s.namaBangunDatar);
+				// bangunDatar[i].setLuas(s.getLuas());
+				// bangunDatar[i].setKeterangan(s.getKeterangan());
             	i++;
+            	// input.reset();
             } 
             
             // opsi lingkaran
@@ -168,13 +205,17 @@ public class App {
             		continue;
             	}
             	
-            	// inisiasi class persegi
-            	Lingkaran s = new Lingkaran();
-            	s.setR(temp1);
+            	// inisiasi object lingkaran
+            	Lingkaran s = new Lingkaran(temp1);
+            	// s.setR(temp1);
             	System.out.println("Luas = " + s.getLuas());
             	System.out.println("Keliling = " + s.getKeliling());
-            	barangs[i] = s.getLuas();
+            	bangunDatar[i] = new BangunDatar();
+				bangunDatar[i].setNama(s.namaBangunDatar);
+				bangunDatar[i].setLuas(s.getLuas());
+				bangunDatar[i].setKeterangan(s.getKeterangan());
             	i++;
+            	// input.reset();
             } 
             
             // opsi belah ketupat
@@ -195,38 +236,77 @@ public class App {
             		continue;
             	}
             	
-            	// inisiasi class belah ketupat
+            	// inisiasi object belah ketupat
             	BelahKetupat s = new BelahKetupat();
             	// set diagonal
             	s.setDiagonal(temp1, temp2);
             	System.out.println("Luas = " + s.getLuas());
             	System.out.println("Keliling = " + s.getKeliling());
-            	barangs[i] = s.getLuas();
+            	bangunDatar[i] = new BangunDatar();
+				bangunDatar[i].setNama(s.namaBangunDatar);
+				bangunDatar[i].setLuas(s.getLuas());
+				bangunDatar[i].setKeterangan(s.getKeterangan());
             	i++;
-
+            	// input.reset();
             } 
             
             // menampilkan array yang menyimpan luas
             else if (action1.equalsIgnoreCase("5")) {
             	System.out.println("Luas tersimpan (Max 10)");
-            	for (int j = 0; j < barangs.length; j++) {
-                    System.out.println(barangs[j]);
+            	for (int j = 0; j < bangunDatar.length; j++) {
+                    System.out.println(bangunDatar[j]);
         		}
         	} else if (action1.equalsIgnoreCase("0")){
+        		input.close();
                 System.exit(0);
             } else {
                 System.out.println("Undefined command");
             }
+			input.reset();
         }
         
+		
 	}
 	
+	/** 
+	 * fungsi ini digunakan untuk validate input
+	 * apakah input bernilai positif atau negatif.
+	 * Jika input bernilai negatif, maka akan menampilkan
+	 * exception
+	 * @param x bertipe double
+	 */
+
 	private static double validation(double x) throws Exception {
 		if (x > 0) {
 			return x;
 		}
 		else {
 			throw new Exception("Tidak boleh negatif.");
+		}
+	}
+
+	private static double[] validation(double x, double y) throws Exception {
+		if (x > 0 && y > 0) {
+			double[] value = new double[2];
+			value[0] = x;
+			value[1] = y;
+			return value;
+		}
+		else {
+			throw new Exception("Input tidak boleh negatif.");
+		}
+	}
+
+	private static double[] validation(double x, double y, double z) throws Exception {
+		if (x > 0 && y > 0 && z > 0) {
+			double[] value = new double[3];
+			value[0] = x;
+			value[1] = y;
+			value[2] = z;
+			return value;
+		}
+		else {
+			throw new Exception("Input tidak boleh negatif.");
 		}
 	}
 
