@@ -114,8 +114,8 @@ public class GetDosenContoller extends HttpServlet {
 		String nama = request.getParameter("nama");
 		Dosen newDosen = new Dosen(nama);
 		dao.insertDosen(newDosen);
-//		response.sendRedirect("kemanaajadeh");
-		daftarDosen(request, response);
+		response.sendRedirect("MyServlet?action=list");
+//		daftarDosen(request, response);
 	}
 		
 	private void updateDosen(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -123,15 +123,15 @@ public class GetDosenContoller extends HttpServlet {
 		String nama = request.getParameter("nama");
 		Dosen dosen = new Dosen(id, nama);
 		dao.updateDosen(dosen);
-//		response.sendRedirect("kemanaajadeh");
-		daftarDosen(request, response);
+		response.sendRedirect("MyServlet?action=list");
+//		daftarDosen(request, response);
 	}
 	
 	private void deleteDosen(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 		dao.deleteDosen(id);
-//		response.sendRedirect("kemanaajadeh");
-		daftarDosen(request, response);
+		response.sendRedirect("MyServlet?action=list");
+//		daftarDosen(request, response);
 	}
 
 	/**

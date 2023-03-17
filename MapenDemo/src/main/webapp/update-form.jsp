@@ -5,22 +5,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
+	<meta charset="ISO-8859-1">
+	<title>Insert title here</title>
+	<link rel="stylesheet" href="assets/css/form.css">
 </head>
 <body>
-	<h2> Update Dosen </h2>
-	
-	<!--  -->
-	
-	<form action="/MapenDemo/MyServlet?action=update" method="post">		
-		<label>ID Dosen : </label>
-		<input type="text" value='<c:out value="${dosen.id}"></c:out>' name="id" readonly/><br>
+	<div class="container">
+		<form action="/MapenDemo/MyServlet?action=update" method="post" id="updateForm" onsubmit="return validateUpdateForm()">		
+		<h2> Update Dosen </h2>
+			<label>ID Dosen : </label>
+			<div class="form-group">
+				<input type="text" class="form-control" value='<c:out value="${dosen.id}"></c:out>' name="id" readonly/><br>
+				
+				<label>Nama Dosen : </label> 
+				<input type="text" class="form-control" value='<c:out value="${dosen.nama}"></c:out>' id="nama" name="nama"><br>			
+			</div>
 		
-		<label>Nama Dosen : </label> 
-		<input type="text" value='<c:out value="${dosen.nama}"></c:out>' name="nama" required="required"><br>
+			<button type="submit" class="btn">Simpan</button><br><br>
+			<a href="/MapenDemo/MyServlet?action=list"><button type="button" class="btn">Kembali</button></a>
+		</form>
+	</div>
 	
-		<Input value="Simpan" type="submit">
-	</form>
+	<script type="text/javascript" src="assets/js/config.js"></script>
 </body>
 </html>
