@@ -47,9 +47,9 @@ public class CustomerRestController {
 		return new ResponseEntity<Void>(HttpStatus.OK);
 	}
 	
-	@GetMapping("/customer/search")
-	public ResponseEntity<List<Customer>> customerSearch(@RequestParam String keyword) {
-		service.search(keyword);
-		return new ResponseEntity<List<Customer>>(HttpStatus.OK);
-	}
+//	@GetMapping("/customer/search")
+//	public ResponseEntity<List<Customer>> customerSearch(@RequestParam String keyword) {
+//		service.search(keyword);
+//		return new ResponseEntity<List<Customer>>(HttpStatus.OK);
+//	}
 }
