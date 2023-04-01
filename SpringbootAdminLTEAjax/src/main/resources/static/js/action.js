@@ -2,25 +2,34 @@
  * @author Fajri Rahman
  */
 
-function saveDataStatus() {
-	$("#msg").html("<span style='color: green'>Data added successfully</span>");
-	$("#input-form").hide();
+// a function to control the modal behaviour when data record successfully added, including the success message
+function queryStatus(state) {
+	if (state == "insert") {
+		$(".status-msg").html("<span style='color: green'>Data added successfully</span>");
+	}
+	else if (state == "update") {
+		$(".status-msg").html("<span style='color: green'>Data updated successfully</span>");		
+	}
+	$('.input-form').hide();
+	$('.modal-footer').hide();
 	setTimeout(function() {
-		$("#addModal").modal('hide');
-		$('#name').val('');
-		$('#email').val('');
-		$('#city').val('');
-		$('#msg').html("");
+		$('#editModal').modal('hide');
+		$('#addModal').modal('hide');
+		$('.status-msg').html("");
+		$('input').val('');
 	}, 1000);
 	setTimeout(function() {
-		$("#input-form").show();
+		$('.input-form').show();
+		$('.modal-footer').show();
 	}, 1500);
 	showData();
 }
+// end of status result function
 
+// a function to show the data based on keyword in real time
 function showData() {
 	$('#customerTable').empty();
-	$.getJSON('http://localhost:8080/customer', {keyword: $('#table_search').val()}, function(json) {
+	$.getJSON('http://localhost:8080/customer', { keyword: $('#table_search').val() }, function(json) {
 		var tr = [];
 		tr.push('<thead>');
 		tr.push('<tr>');
@@ -31,65 +40,101 @@ function showData() {
 		tr.push('<th>Action</th>');
 		tr.push('</tr>');
 		tr.push('</thead>');
+		tr.push('<tbody>');
 		for (var i = 0; i < json.length; i++) {
 			tr.push('<tr>');
 			tr.push('<td>' + json[i].id + '</td>');
 			tr.push('<td>' + json[i].name + '</td>');
 			tr.push('<td>' + json[i].email + '</td>');
 			tr.push('<td>' + json[i].city + '</td>');
-
-			tr.push('<td><a class=\'btn btn-outline-warning edit\'><i class="fas fa-edit"> Edit</i></a>&nbsp; | &nbsp;<a class=\'btn btn-outline-danger delete\' id='
+/*			tr.push('<td><a class=\'btn btn-outline-warning edit\'><i class="fas fa-edit"> Edit</i></a>&nbsp; | &nbsp;<a class=\'btn btn-outline-danger delete\' id='
+				+ json[i].id +
+				'><i class="fas fa-trash-alt"> Delete</i></a></td>');*/
+			tr.push('<td><a class=\'btn btn-outline-warning edit\' id=' + json[i].id + '><i class="fas fa-edit"> Edit</i></a>&nbsp; | &nbsp;<a class=\'btn btn-outline-danger delete\' id='
 				+ json[i].id +
 				'><i class="fas fa-trash-alt"> Delete</i></a></td>');
 			tr.push('</tr>');
 		}
+		tr.push('</tbody>');
 		$('#customerTable').append($(tr.join('')));
 	});
 }
 
-
 $(document).ready(function() {
-	// menampilkan table
+	// show data on table
+	showData();
+	// end show data
+	
+	// show filtered data based on table_search keyword
 	$('#table_search').on('keyup', function() {
 		showData();
 	});
-	showData();
-	$("#closeAdd, #closeModal").click(function (){
-		setTimeout(function() {
-			$('#msg').html("");
-		}, 500);
-	});
-	$(document).delegate('#addNew', 'click', function(event) {
-		// disable fungsi default dari tombol
-		event.preventDefault();
-
-		var name = $('#name').val();
-		var email = $('#email').val();
-		var city = $('#city').val();
-		
-		if (city == "") {
-			$("#msg").html( "<span style='color: red'>City is requid</span>" );
-		}
-		if (email == "") {
-			$("#msg").html( "<span style='color: red'>Email is required</span>" );
-		}
-		if (name == "") {
-			$("#msg").html( "<span style='color: red'>Name is required</span>" );
-		}
-		if (name != "" && email != "" && city != "") {
-				$.ajax({
+	// end filtered data
+	
+	// insert new data with validation
+	$('#insert-form').validate({
+		// input field restriction
+		rules: {
+			name: {
+				required: true,
+			},
+			email: {
+				required: true,
+				email: true,
+			},
+			city: {
+				required: true
+			},
+		},
+		// error messages on each field
+		messages: {
+			name: {
+				required: "Please fill name input field",
+			},
+			email: {
+				required: "Please enter an email address",
+				email: "Please enter a valid email address"
+			},
+			city: {
+				required: "Please fill city input field",
+			},
+		},
+		// if all input is valid, data will be transfered to REST controller
+		submitHandler: function() {
+			$.ajax({
 				type: "POST",
 				contentType: "application/json; charset=utf-8",
 				url: "http://localhost:8080/customer/save",
-				data: JSON.stringify({ 'name': name, 'email': email, 'city': city }),
+				data: JSON.stringify({ 'name': $('#name').val(), 'email': $('#email').val(), 'city': $('#city').val() }),
 				cache: false,
-				success: saveDataStatus
-			});	
+				success: function() {
+					queryStatus("insert");					
+				},
+				error: function() {
+					$('#err').html('<span style=\'color:red; font-weight: bold; font-size: 30px;\'>Error inserting record').fadeIn().fadeOut(4000, function() {
+						$(this).remove();
+					});
+				}
+			})
+		},
+		// if there is any blank input, show the message below the input field using invalid-feedback class from bootstrap
+		errorElement: 'span',
+		errorPlacement: function(error, element) {
+			error.addClass('invalid-feedback');
+			element.closest('.form-group').append(error);
+		},
+		highlight: function(element, errorClass, validClass) {
+			$(element).addClass('is-invalid');
+		},
+		unhighlight: function(element, errorClass, validClass) {
+			$(element).removeClass('is-invalid');
 		}
 	});
+	// end insert data
 
+	// delete data by id
 	$(document).delegate('.delete', 'click', function() {
-		if (confirm('Do you really want to delete record?')) {
+		if (confirm('Are you sure to delete this data?')) {
 			var id = $(this).attr('id');
 			var parent = $(this).parent().parent();
 			$.ajax({
@@ -110,159 +155,79 @@ $(document).ready(function() {
 			});
 		}
 	});
+	// end delete data
 
+	// show the modal to edit data
 	$(document).delegate('.edit', 'click', function() {
-		var parent = $(this).parent().parent();
-
-		var id = parent.children("td:nth-child(1)");
-		var name = parent.children("td:nth-child(2)");
-		var email = parent.children("td:nth-child(3)");
-		var city = parent.children("td:nth-child(4)");
-		var buttons = parent.children("td:nth-child(5)");
-
-		name.html("<input type='text' class='form-control' id='name' value='" + name.html() + "'/>");
-		email.html("<input type='text' class='form-control' id='email' value='" + email.html() + "'/>");
-		city.html("<input type='text' class='form-control' id='city' value='" + city.html() + "'/>");
-
-		buttons.html("<a class='btn btn-outline-success' id='save'><i class='fas fa-save'> Save</i></a>&nbsp; | &nbsp;<a class='btn btn-outline-danger delete' id='"
-			+ id.html() +
-			"'><i class='fas fa-trash-alt'> Delete</i></a>");
-	});
-
-	$(document).delegate('#save', 'click', function() {
-		var parent = $(this).parent().parent();
-
-		var id = parent.children("td:nth-child(1)");
-		var name = parent.children("td:nth-child(2)");
-		var email = parent.children("td:nth-child(3)");
-		var city = parent.children("td:nth-child(4)");
-		var buttons = parent.children("td:nth-child(5)");
-
-		$.ajax({
-			type: "POST",
-			contentType: "application/json; charset=utf-8",
-			url: "http://localhost:8080/customer/save",
-			data: JSON.stringify({
-				'id': id.html(),
-				'name': name.children("input[type=text]").val(),
-				'email': email.children("input[type=text]").val(),
-				'city': city.children("input[type=text]").val()
-			}),
-			cache: false,
-			success: function() {
-				name.html(name.children("input[type=text]").val());
-				email.html(email.children("input[type=text]").val());
-				city.html(city.children("input[type=text]").val());
-				buttons.html("<a class='btn btn-outline-warning edit' id='" + id.html() + "'><i class='fas fa-edit'> Edit</i></a>&nbsp; | &nbsp;<a class='btn btn-outline-danger delete' id='"
-					+ id.html() +
-					"'><i class='fas fa-trash-alt'> Delete</i></a>");
-			},
-			error: function() {
-				$('#err').html('<span style=\'color:red; font-weight: bold; font-size: 30px;\'>Error updating record').fadeIn().fadeOut(4000, function() {
-					$(this).remove();
-				});
-			}
+		$('#editModal').modal('show');
+		var id = $(this).attr('id');
+		$.getJSON('http://localhost:8080/customer/find', { id }, function(json) {
+			$('#customerId').val(id);
+			$('#eName').val(json.name);
+			$('#eEmail').val(json.email);
+			$('#eCity').val(json.city);
 		});
 	});
-	
-	
-//	$(document).delegate('.edit', 'click', function() {
-//		var parent = $(this).parent().parent();
-//	
-//		var id = parent.children("td-child(1)");
-//		var name = parent.children("td:n-child(2)");
-//		var email = parent.children("td:n-child(3)");
-//		var city = parent.children("td:n-child(4)");
-//		var buttons = parent.children("td:n-child(5)");
-//	
-//		name.html("<input type='text' id='name' value='" + name.html + "'/>");
-//		email.html("<input type='text' id='email' value='" + email.html() + "'/>");
-//		city.html("<input type='text' id='city' value='" + city.html() + "'/>");
-//	
-//		buttons.html("<a id='save'><i class='fas fa-save' style='color:#28a745;cursor:pointer;'> Save</i></a>&nbsp; | &nbsp;<a class='delete' id='"
-//			+ id.html() +
-//			"'><i class='fas fa-trash-alt' style='color:#dc3545;cursor:pointer;'> Delete</i></a>");
-//	});
-//	$(document).delegate('#save', 'click', function() {
-//		var parent = $(this).parent().parent();
-//
-//		var id = parent.children("td:nth-child(1)");
-//		var name = parent.children("td:nth-child(2)");
-//		var email = parent.children("td:nth-child(3)");
-//		var city = parent.children("td:nth-child(4)");
-//		var buttons = parent.children("td:nth-child(5)");
-//
-//		$.ajax({
-//			type: "POST",
-//			contentType: "application/json; charset=utf-8",
-//			url: "http://localhost:8080/customer/save",
-//			data: JSON.stringify({
-//				'id': id.html(),
-//				'name': name.children("input[type=text]").val(),
-//				'email': email.children("input[type=text]").val(),
-//				'city': city.children("input[type=text]").val()
-//			}),
-//			cache: false,
-//			success: function() {
-//				name.html(name.children("input[type=text]").val());
-//				email.html(email.children("input[type=text]").val());
-//				city.html(city.children("input[type=text]").val());
-//				buttons.html("<a class='edit' id='" + id.html() + "'><i class='fas fa-edit' style='color:#ffc107;cursor:pointer;'> Edit</i></a>&nbsp; | &nbsp;<a class='delete' id='"
-//					+ id.html() +
-//					"'><i class='fas fa-trash-alt' style='color:#dc3545;cursor:pointer;'> Delete</i></a>");
-//			},
-//			error: function() {
-//				$('#err').html('<span style=\'color:red; font-weight: bold; font-size: 30px;\'>Error updating record').fadeIn().fadeOut(4000, function() {
-//					$(this).remove();
-//				});
-//			}
-//		});
-//	});
+	// end of show edit modal
 
-
+	// update selected data with validation
+	$('#update-form').validate({
+		// input field restriction
+		rules: {
+			name: {
+				required: true,
+			},
+			email: {
+				required: true,
+				email: true,
+			},
+			city: {
+				required: true
+			},
+		},
+		// error messages on each field
+		messages: {
+			name: {
+				required: "Please fill name input field",
+			},
+			email: {
+				required: "Please enter an email address",
+				email: "Please enter a valid email address"
+			},
+			city: {
+				required: "Please fill city input field",
+			},
+		},
+		// if all input is valid, data will be transfered to REST controller
+		submitHandler: function() {
+			$.ajax({
+				type: "POST",
+				contentType: "application/json; charset=utf-8",
+				url: "http://localhost:8080/customer/save",
+				data: JSON.stringify({ 'id': $('#customerId').val(), 'name': $('#eName').val(), 'email': $('#eEmail').val(), 'city': $('#eCity').val() }),
+				cache: false,
+				success: function() {
+					queryStatus("update");
+				},
+				error: function() {
+					$('#err').html('<span style=\'color:red; font-weight: bold; font-size: 30px;\'>Error inserting record').fadeIn().fadeOut(4000, function() {
+						$(this).remove();
+					});
+				}
+			})
+		},
+		// if there is any blank input, show the message below the input field using invalid-feedback class from bootstrap
+		errorElement: 'span',
+		errorPlacement: function(error, element) {
+			error.addClass('invalid-feedback');
+			element.closest('.form-group').append(error);
+		},
+		highlight: function(element, errorClass, validClass) {
+			$(element).addClass('is-invalid');
+		},
+		unhighlight: function(element, errorClass, validClass) {
+			$(element).removeClass('is-invalid');
+		}
+	});
+	// end of data update
 });
-
-/*$(function () {
-  $.validator.setDefaults({
-    submitHandler: function () {
-      alert( "Form successful submitted!" );
-    }
-  });
-  $('#quickForm').validate({
-	  rules: {
-		  name: {
-			  required: true,
-		  },
-		  email: {
-			  required: true,
-			  email: true,
-		  },
-		  city: {
-			  required: true
-		  },
-	  },
-	  messages: {
-		  name: {
-			  required: "Please fill name input field",
-		  },
-		  email: {
-			  required: "Please enter an email address",
-			  email: "Please enter a valid email address"
-		  },
-		  city: {
-			  required: "Please fill city input field",
-		  },
-	  },
-	  errorElement: 'span',
-	  errorPlacement: function(error, element) {
-		  error.addClass('invalid-feedback');
-		  element.closest('.form-group').append(error);
-	  },
-	  highlight: function(element, errorClass, validClass) {
-		  $(element).addClass('is-invalid');
-	  },
-	  unhighlight: function(element, errorClass, validClass) {
-		  $(element).removeClass('is-invalid');
-	  }
-  });
-});*/
