@@ -29,7 +29,14 @@ function queryStatus(state) {
 // a function to show the data based on keyword in real time
 function showData() {
 	$('#customerTable').empty();
-	$.getJSON('http://localhost:8080/customer', { keyword: $('#table_search').val() }, function(json) {
+	var urlPath = "";
+	if ($('#table_search').val() == "") {
+		urlPath = "http://localhost:8080/customer";
+	}
+	else {
+		urlPath = "http://localhost:8080/customer/search/" + $('#table_search').val();
+	}
+	$.getJSON(urlPath, function(json) {
 		var tr = [];
 		tr.push('<thead>');
 		tr.push('<tr>');
@@ -47,12 +54,8 @@ function showData() {
 			tr.push('<td>' + json[i].name + '</td>');
 			tr.push('<td>' + json[i].email + '</td>');
 			tr.push('<td>' + json[i].city + '</td>');
-/*			tr.push('<td><a class=\'btn btn-outline-warning edit\'><i class="fas fa-edit"> Edit</i></a>&nbsp; | &nbsp;<a class=\'btn btn-outline-danger delete\' id='
-				+ json[i].id +
-				'><i class="fas fa-trash-alt"> Delete</i></a></td>');*/
-			tr.push('<td><a class=\'btn btn-outline-warning edit\' id=' + json[i].id + '><i class="fas fa-edit"> Edit</i></a>&nbsp; | &nbsp;<a class=\'btn btn-outline-danger delete\' id='
-				+ json[i].id +
-				'><i class="fas fa-trash-alt"> Delete</i></a></td>');
+			tr.push('<td><a class=\'btn btn-outline-warning edit\' id=' + json[i].id + '><i class="fas fa-edit"> Edit</i></a>&nbsp; | &nbsp;<a class=\'btn btn-outline-danger delete\' id=' 
+				+ json[i].id + '><i class="fas fa-trash-alt"> Delete</i></a></td>');
 			tr.push('</tr>');
 		}
 		tr.push('</tbody>');
@@ -161,7 +164,7 @@ $(document).ready(function() {
 	$(document).delegate('.edit', 'click', function() {
 		$('#editModal').modal('show');
 		var id = $(this).attr('id');
-		$.getJSON('http://localhost:8080/customer/find', { id }, function(json) {
+		$.getJSON('http://localhost:8080/customer/update/' + id, function(json) {
 			$('#customerId').val(id);
 			$('#eName').val(json.name);
 			$('#eEmail').val(json.email);
